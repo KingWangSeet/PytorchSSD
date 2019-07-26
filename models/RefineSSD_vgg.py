@@ -65,12 +65,17 @@ class RefineSSD(nn.Module):
         # Layer learns to scale the l2 normalized features from conv4_3
         self.L2Norm_4_3 = L2Norm(512, 10)
         self.L2Norm_5_3 = L2Norm(512, 8)
+        
+        //Extra layers Cov6_1,Cov_6_2
+        self.extras = nn.Sequential(nn.Conv2d(1024, 256, kernel_size=1, stride=1, padding=0), nn.ReLU(inplace=True), \
+                                    nn.Conv2d(256, 512, kernel_size=3, stride=2, padding=1), nn.ReLU(inplace=True))
+        
+        //P6  three 3*3*256
         self.last_layer_trans = nn.Sequential(nn.Conv2d(512, 256, kernel_size=3, stride=1, padding=1),
                                               nn.ReLU(inplace=True),
                                               nn.Conv2d(256, 256, kernel_size=3, stride=1, padding=1),
                                               nn.Conv2d(256, 256, kernel_size=3, stride=1, padding=1))
-        self.extras = nn.Sequential(nn.Conv2d(1024, 256, kernel_size=1, stride=1, padding=0), nn.ReLU(inplace=True), \
-                                    nn.Conv2d(256, 512, kernel_size=3, stride=2, padding=1), nn.ReLU(inplace=True))
+        
 
         if use_refine:
             self.arm_loc = nn.ModuleList([nn.Conv2d(512, 12, kernel_size=3, stride=1, padding=1), \
